@@ -92,8 +92,8 @@
       const { t } = useI18n();
 
       const formData = reactive({
-        account: 'vben',
-        password: '123456',
+        account: 'admin',
+        password: 'admin',
       });
 
       const formState = reactive({
