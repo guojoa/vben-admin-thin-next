@@ -16,7 +16,7 @@ import { useMessage } from '/@/hooks/web/useMessage';
 
 import router from '/@/router';
 
-import { loginApi, getUserInfoById } from '/@/api/sys/user';
+import { loginApi, getUserInfoById, getUserInfo } from '/@/api/sys/user';
 
 import { setLocal, getLocal, getSession, setSession } from '/@/utils/helper/persistent';
 import { useProjectSetting } from '/@/hooks/setting';
@@ -105,13 +105,13 @@ class User extends VuexModule {
       const { goHome = true, mode, ...loginParams } = params;
       const data = await loginApi(loginParams, mode);
 
-      const { token, userId } = data;
+      const { token } = data;
 
       // save token
       this.commitTokenState(token);
 
       // get user info
-      const userInfo = await this.getUserInfoAction({ userId });
+      const userInfo = await this.getUserInfo();
 
       // const name = FULL_PAGE_NOT_FOUND_ROUTE.name;
       // name && router.removeRoute(name);
@@ -120,6 +120,13 @@ class User extends VuexModule {
     } catch (error) {
       return null;
     }
+  }
+
+  @Action
+  async getUserInfo() {
+    const userInfo = await getUserInfo();
+    this.commitUserInfoState(userInfo);
+    return userInfo;
   }
 
   @Action

@@ -8,7 +8,8 @@ import {
 import { ErrorMessageMode } from '/@/utils/http/axios/types';
 
 enum Api {
-  Login = '/login',
+  Login = '/public/login',
+  GetUserInfo = '/users/my',
   GetUserInfoById = '/getUserInfoById',
   GetPermCodeByUserId = '/getPermCodeByUserId',
 }
@@ -37,6 +38,13 @@ export function getUserInfoById(params: GetUserInfoByUserIdParams) {
     url: Api.GetUserInfoById,
     method: 'GET',
     params,
+  });
+}
+
+export function getUserInfo() {
+  return defHttp.request<GetUserInfoByUserIdModel>({
+    url: Api.GetUserInfo,
+    method: 'GET',
   });
 }
 
