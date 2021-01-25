@@ -12,7 +12,7 @@ import { userStore } from '/@/store/modules/user';
 import { asyncRoutes } from '/@/router/routes';
 import { filter } from '/@/utils/helper/treeHelper';
 import { toRaw } from 'vue';
-import { getMenuListById } from '/@/api/sys/menu';
+import { getTree } from '/@/api/sys/menu';
 
 import { transformObjToRoute } from '/@/router/helper/routeHelper';
 import { transformRouteToMenu } from '/@/router/helper/menuHelper';
@@ -106,17 +106,18 @@ class Permission extends VuexModule {
         duration: 1,
       });
       // 这里获取后台路由菜单逻辑自行修改
-      const paramId = id || userStore.getUserInfoState.userId;
-      if (!paramId) {
-        throw new Error('paramId is undefined!');
-      }
-      let routeList = (await getMenuListById({ id: paramId })) as AppRouteRecordRaw[];
+      //   const paramId = id || userStore.getUserInfoState.userId;
+      //   if (!paramId) {
+      //     throw new Error('paramId is undefined!');
+      //   }
+      let routeList = (await getTree()) as AppRouteRecordRaw[];
 
       // 动态引入组件
       routeList = transformObjToRoute(routeList);
+      console.log('routelit', routeList);
       //  后台路由转菜单结构
       const backMenuList = transformRouteToMenu(routeList);
-
+      console.log('backMenulist', backMenuList);
       this.commitBackMenuListState(backMenuList);
 
       routes = [PAGE_NOT_FOUND_ROUTE, ...routeList];

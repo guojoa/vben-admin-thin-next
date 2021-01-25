@@ -4,6 +4,7 @@ import { getMenuListByIdParams, getMenuListByIdParamsResultModel } from './model
 
 enum Api {
   GetMenuListById = '/getMenuListById',
+  GetTree = '/menu/getTree',
 }
 
 /**
@@ -14,5 +15,12 @@ export function getMenuListById(params: getMenuListByIdParams) {
     url: Api.GetMenuListById,
     method: 'GET',
     params,
+  });
+}
+
+export function getTree() {
+  return defHttp.request<getMenuListByIdParamsResultModel>({
+    url: Api.GetTree,
+    method: 'GET',
   });
 }

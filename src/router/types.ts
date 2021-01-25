@@ -39,6 +39,8 @@ export interface RouteMeta {
 
   // Never show in menu
   hideMenu?: boolean;
+
+  permissions?: string;
 }
 
 // @ts-ignore

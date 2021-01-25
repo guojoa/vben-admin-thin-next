@@ -57,6 +57,8 @@ export default defineComponent({
 
     const { menusRef } = useSplitMenu(toRef(props, 'splitType'));
 
+    console.log('menusRef', props);
+
     const { getIsMobile } = useAppInject();
 
     const getComputedMenuMode = computed(() =>
@@ -128,6 +130,7 @@ export default defineComponent({
 
     function renderMenu() {
       const menus = unref(menusRef);
+      console.log('menus', menus);
       if (!menus || !menus.length) return null;
       return !props.isHorizontal ? (
         <SimpleMenu

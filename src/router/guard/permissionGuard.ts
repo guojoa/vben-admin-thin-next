@@ -26,7 +26,7 @@ export function createPermissionGuard(router: Router) {
     }
 
     const token = getToken();
-
+    console.log('token', token);
     // token does not exist
     if (!token) {
       // You can access without permission. You need to set the routing meta.ignoreAuth to true
@@ -56,6 +56,7 @@ export function createPermissionGuard(router: Router) {
       return;
     }
     const routes = await permissionStore.buildRoutesAction();
+    console.log('routes', routes);
     routes.forEach((route) => {
       // router.addRoute(RootRoute.name!, route as RouteRecordRaw);
       router.addRoute(route as RouteRecordRaw);
