@@ -1,32 +1,103 @@
 <template>
-  <div class="welcome">
-    user page
-    <a-button @click="getuser">sss</a-button>
+  <div class="p-4">
+    <BasicTable @register="registerTable">
+      <template #status="{ record }">
+        <Tag :color="record.status ? 'green' : 'red'"> {{ record.status ? '正常' : '禁用' }} </Tag>
+      </template>
+      <template #action="{ record }">
+        <TableAction
+          :actions="[
+            {
+              label: '授权',
+              onClick: handleRole.bind(null, record),
+            },
+            {
+              label: record.status ? '禁用' : '启用',
+              onClick: record.status
+                ? confirmStatus.bind(null, record, 0)
+                : confirmStatus.bind(null, record, 1),
+            },
+            {
+              label: '重置密码',
+              onClick: handleReset.bind(null, record),
+            },
+          ]"
+        />
+      </template>
+    </BasicTable>
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent } from 'vue';
-  import { userStore } from '/@/store/modules/user';
+  import { defineComponent, unref } from 'vue';
+  import { BasicTable, useTable, TableAction } from '/@/components/Table';
+  import { getUserTableColumns, getUserFormConfig } from './userData';
+  import { useMessage } from '/@/hooks/web/useMessage';
+  import { Tag } from 'ant-design-vue';
+  import { getUserList, setUserStatus } from '/@/api/admin/user';
+
   export default defineComponent({
-    name: 'user',
+    components: { BasicTable, TableAction, Tag },
     setup() {
-      async function getuser() {
-        console.log('aaaa');
-        const userinfo = await userStore.getUserInfo();
-        console.log('userinfo', userinfo);
+      const [registerTable, { reload }] = useTable({
+        title: '用户列表',
+        api: getUserList,
+        useSearchForm: true,
+        formConfig: getUserFormConfig(),
+        columns: getUserTableColumns(),
+        actionColumn: {
+          width: 260,
+          title: '操作',
+          dataIndex: 'action',
+          slots: { customRender: 'action' },
+        },
+        showTableSetting: true,
+      });
+
+      const { createMessage, createConfirm } = useMessage();
+
+      function handleRole(record: Recordable) {
+        console.log('edit', unref(record));
+      }
+      function confirmStatus(record, status) {
+        const title = status ? '启用' : '禁用';
+        const content = status ? '确实要启用这个用户吗' : '确实要禁用这个用户吗';
+        createConfirm({
+          iconType: 'warning',
+          title,
+          content,
+          onOk: async () => {
+            (await status) ? handleEnable(record) : handleDisable(record);
+          },
+        });
+        console.log('status', status, record);
+      }
+      async function handleDisable(record: Recordable) {
+        const { id } = unref(record);
+        const res = await setUserStatus(id, 0);
+        console.log('res', res);
+        if (res.affected) {
+          createMessage.success('修改成功');
+          reload();
+        }
+      }
+      async function handleEnable(record: Recordable) {
+        const { id } = unref(record);
+        const res = await setUserStatus(id, 1);
+        console.log('res', res);
+        if (res.affected) {
+          createMessage.success('修改成功');
+          reload();
+        }
+      }
+      function handleReset(record: Recordable) {
+        console.log('delete', unref(record));
       }
       return {
-        getuser,
+        registerTable,
+        handleRole,
+        handleReset,
+        confirmStatus,
       };
     },
   });
 </script>
-<style lang="less" scoped>
-  .welcome {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-  }
-</style>

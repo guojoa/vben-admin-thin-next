@@ -4,17 +4,17 @@ import { LAYOUT } from '/@/router/constant';
 import { t } from '/@/hooks/web/useI18n';
 
 const dashboard: AppRouteModule = {
-  path: '/home',
+  path: '/welcome',
   name: 'Home',
   component: LAYOUT,
-  redirect: '/home/welcome',
+  redirect: '/welcome/index',
   meta: {
     icon: 'bx:bx-home',
     title: t('routes.dashboard.welcome'),
   },
   children: [
     {
-      path: 'welcome',
+      path: 'index',
       name: 'Welcome',
       component: () => import('/@/views/dashboard/welcome/index.vue'),
       meta: {

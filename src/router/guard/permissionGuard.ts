@@ -65,6 +65,8 @@ export function createPermissionGuard(router: Router) {
     const redirectPath = (from.query.redirect || to.path) as string;
     const redirect = decodeURIComponent(redirectPath);
     const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect };
+    console.log('to', to);
+    console.log('from', from);
     permissionStore.commitDynamicAddedRouteState(true);
     next(nextData);
   });

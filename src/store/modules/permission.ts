@@ -84,7 +84,7 @@ class Permission extends VuexModule {
   }
 
   @Action
-  async buildRoutesAction(id?: number | string): Promise<AppRouteRecordRaw[]> {
+  async buildRoutesAction(): Promise<AppRouteRecordRaw[]> {
     const { t } = useI18n();
     let routes: AppRouteRecordRaw[] = [];
     const roleList = toRaw(userStore.getRoleListState);
