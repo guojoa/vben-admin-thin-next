@@ -4,6 +4,9 @@
       <template #status="{ record }">
         <Tag :color="record.status ? 'green' : 'red'"> {{ record.status ? '正常' : '禁用' }} </Tag>
       </template>
+      <template #toolbar>
+        <a-button class="mr-2" type="primary" @click="userAdd">添加</a-button>
+      </template>
       <template #action="{ record }">
         <TableAction
           :actions="[
@@ -25,6 +28,8 @@
         />
       </template>
     </BasicTable>
+    <addModal @register="addregister" @formsub="formsub"></addModal>
+    <roleModal @register="roleregister"></roleModal>
   </div>
 </template>
 <script lang="ts">
@@ -34,9 +39,12 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Tag } from 'ant-design-vue';
   import { getUserList, setUserStatus } from '/@/api/admin/user';
+  import addModal from './addModal.vue';
+  import roleModal from './roleModal.vue';
+  import { useModal } from '/@/components/Modal';
 
   export default defineComponent({
-    components: { BasicTable, TableAction, Tag },
+    components: { BasicTable, TableAction, Tag, addModal, roleModal },
     setup() {
       const [registerTable, { reload }] = useTable({
         title: '用户列表',
@@ -52,11 +60,17 @@
         },
         showTableSetting: true,
       });
-
+      const [addregister, { openModal: openadd }] = useModal();
+      const [roleregister, { openModal: roleadd }] = useModal();
       const { createMessage, createConfirm } = useMessage();
 
       function handleRole(record: Recordable) {
-        console.log('edit', unref(record));
+        const { id } = unref(record);
+        roleadd(true, { id });
+      }
+      function formsub(is: boolean) {
+        console.log('is', is);
+        reload({ page: 1 });
       }
       function confirmStatus(record, status) {
         const title = status ? '启用' : '禁用';
@@ -92,11 +106,19 @@
       function handleReset(record: Recordable) {
         console.log('delete', unref(record));
       }
+      function userAdd() {
+        console.log('add');
+        openadd();
+      }
       return {
         registerTable,
         handleRole,
         handleReset,
         confirmStatus,
+        userAdd,
+        addregister,
+        formsub,
+        roleregister,
       };
     },
   });
